@@ -79,6 +79,8 @@ private:
     QFile              *_logFile;
     QTextStream         _logStream;
 
+    bool                _useWinrar;
+
 
 
 public:
@@ -198,12 +200,14 @@ QString Ex0days::_subPath() const
 }
 
 const QString &Ex0days::_extractCMD() const
-{
+{    
     switch (_archiveType) {
     case ARCHIVE_TYPE::ACE:
         return _unaceCmd;
     case ARCHIVE_TYPE::RAR:
         return _unrarCmd.isEmpty() ? _7zCmd : _unrarCmd;
+    case ARCHIVE_TYPE::ARJ:
+        return _useWinrar ? _unrarCmd : _7zCmd;
     default:
         return _7zCmd;
     }

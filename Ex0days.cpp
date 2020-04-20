@@ -100,7 +100,8 @@ Ex0days::Ex0days(int &argc, char *argv[]):
     _stopProcess(false),
     _testOnly(false), _delSrc(false),
     _debug(false),
-    _logFile(nullptr), _logStream()
+    _logFile(nullptr), _logStream(),
+    _useWinrar(false)
 {
 #if defined(WIN32) || defined(__MINGW64__)
     _settings = new QSettings(QString("%1.ini").arg(appName()), QSettings::Format::IniFormat);
@@ -582,10 +583,12 @@ void Ex0days::_doSecondExtract()
     {
         if (_debug)
             _log(tr("  - first archive found: %1").arg(_fistArchive.fileName()));
-        QStringList args = s7zArgs;
+        const QString &cmd = _extractCMD();
+        QStringList   args = s7zArgs;
+        if (_useWinrar && (_archiveType == ARCHIVE_TYPE::RAR || _archiveType == ARCHIVE_TYPE::ARJ))
+            args << "-ibck";
         args << _fistArchive.fileName(); // the process is in the good directory!
 
-        const QString &cmd = _extractCMD();
         qDebug() << cmd << " "  << args.join(" ");
         _extProc.start(cmd, args);
     }
@@ -627,6 +630,8 @@ bool Ex0days::setUnrarCmd(const QString &path)
     {
         _unrarCmd = path;
         _settings->setValue(sParamValues[Param::cmdRar], _unrarCmd);
+        if (_unrarCmd.toLower().endsWith("winrar.exe"))
+            _useWinrar = true;
         return true;
     }
     else
@@ -765,6 +770,9 @@ void Ex0days::_loadSettings()
         _7zCmd    = setting(Param::cmd7z);
         _unrarCmd = setting(Param::cmdRar);
         _unaceCmd = setting(Param::cmdAce);
+
+        if (_unrarCmd.toLower().endsWith("winrar.exe"))
+            _useWinrar = true;
     }
     else
     {
