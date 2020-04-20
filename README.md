@@ -15,7 +15,7 @@ ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** f
   - you can also **delete the source folders** automatically once extracted
   - **setting are saved** in a config file (ini file on Windows, ~/.config/ex0days/1.0.conf on Linux)
 <br/>
-A portable release containing all of them is available for win64: [ex0days_v1.0_win64.zip](https://github.com/mbruel/ex0days/releases/download/v1.0/ex0days_v1.0_win64.zip)<br/>
+A portable release containing all of them is available for win64: [ex0days_v1.0_win64](https://github.com/mbruel/ex0days/releases/download/v1.0/ex0days_v1.0_win64.zip)<br/>
 
 
 ### How to build
