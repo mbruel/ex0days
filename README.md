@@ -1,4 +1,4 @@
-<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/mbruel/ex0days/master/src/resources/icons/ex0days.png" alt="ex0days">
+<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/mbruel/ex0days/master/resources/icons/ex0days.png" alt="ex0days">
 
 # ex0days v1.0
 
