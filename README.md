@@ -36,7 +36,7 @@ you can copy it somewhere in your PATH so it will be accessible from anywhere
 
 ### How to use it in command line
 <pre>
-Syntax: ex0days (options)* (-i <src_folder>)+ -o <output_folder>
+Syntax: ex0days (options)* (-i &lt;src_folder&gt;)+ -o &lt;output_folder&gt;
 	-h or --help       : Help: display syntax
 	-v or --version    : app version
 	--debug            : display debug informations
