@@ -4,7 +4,7 @@
 
 **Command line / GUI tool to automate extraction \(or test\) of double compressed 0days**<br/>
 <br/>
-![ex0days_v1.1](https://raw.githubusercontent.com/mbruel/ex0days/master/pics/ex0days_v1.0.png)
+![ex0days_v1.2](https://raw.githubusercontent.com/mbruel/ex0days/master/pics/ex0days_v1.2.png)
 <br/>
 ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** for all other formats.<br/>
   - it will browse recursively the folders you provide.</li>
