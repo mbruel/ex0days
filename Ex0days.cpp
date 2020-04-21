@@ -66,10 +66,12 @@ const QMap<Ex0days::Param, QString> Ex0days::sParamValues = {
     {Param::cmd7z,    "cmd7z"},
     {Param::cmdRar,   "cmdRar"},
     {Param::cmdAce,   "cmdAce"},
+    {Param::cmdArj,   "cmdArj"},
     {Param::dstDir,   "dstDir"},
     {Param::testOnly, "testOnly"},
     {Param::delSrc,   "delSrc"},
-    {Param::debug,    "debug"}
+    {Param::debug,    "debug"},
+    {Param::dispPaths,"dispPaths"}
 };
 
 const QStringList Ex0days::s7zArgs = {"x", "-y"};
@@ -83,9 +85,9 @@ Ex0days::Ex0days(int &argc, char *argv[]):
     QObject(), CmdOrGuiApp (argc, argv),
     _state(STATE::IDLE),
 #if defined(WIN32) || defined(__MINGW64__)
-    _7zCmd("./7z.exe"), _unrarCmd("./unrar.exe"), _unaceCmd("./unace.exe"),
+    _7zCmd("./7z.exe"), _unrarCmd("./unrar.exe"), _unaceCmd("./unace.exe"), _arjCmd("./arj.exe"),
 #else
-    _7zCmd("/usr/bin/7z"), _unrarCmd("/usr/bin/unrar"), _unaceCmd("/usr/bin/unace"),
+    _7zCmd("/usr/bin/7z"), _unrarCmd("/usr/bin/unrar"), _unaceCmd("/usr/bin/unace"), _arjCmd("/usr/bin/arj"),
 #endif
     _dstDir(nullptr),
     _cout(stdout), _cerr(stderr),
@@ -585,8 +587,11 @@ void Ex0days::_doSecondExtract()
             _log(tr("  - first archive found: %1").arg(_fistArchive.fileName()));
         const QString &cmd = _extractCMD();
         QStringList   args = s7zArgs;
-        if (_useWinrar && (_archiveType == ARCHIVE_TYPE::RAR || _archiveType == ARCHIVE_TYPE::ARJ))
+        if (_archiveType == ARCHIVE_TYPE::ARJ)
+            args << "-v"; // multi-volume
+        else if (_useWinrar && _archiveType == ARCHIVE_TYPE::RAR)
             args << "-ibck";
+
         args << _fistArchive.fileName(); // the process is in the good directory!
 
         qDebug() << cmd << " "  << args.join(" ");
@@ -651,6 +656,19 @@ bool Ex0days::setUnaceCmd(const QString &path)
         return false;
 }
 
+bool Ex0days::setArjCmd(const QString &path)
+{
+    QFileInfo fi(path);
+    if (fi.exists() && fi.isFile() && fi.isExecutable())
+    {
+        _arjCmd = path;
+        _settings->setValue(sParamValues[Param::cmdArj], _arjCmd);
+        return true;
+    }
+    else
+        return false;
+}
+
 bool Ex0days::setDstFolder(const QString &path)
 {
     QFileInfo fi(path);
@@ -666,15 +684,16 @@ bool Ex0days::setDstFolder(const QString &path)
         return false;
 }
 
-void Ex0days::setOptions(bool testOnly, bool delSrc, bool debug)
+void Ex0days::setOptions(bool testOnly, bool delSrc, bool debug, bool dispPaths)
 {
     _testOnly  = testOnly;
     _delSrc    = delSrc;
     _debug     = debug;
 
-    _settings->setValue(sParamValues[Param::testOnly], testOnly);
-    _settings->setValue(sParamValues[Param::delSrc],   delSrc);
-    _settings->setValue(sParamValues[Param::debug],    debug);
+    _settings->setValue(sParamValues[Param::testOnly],  testOnly);
+    _settings->setValue(sParamValues[Param::delSrc],    delSrc);
+    _settings->setValue(sParamValues[Param::debug],     debug);
+    _settings->setValue(sParamValues[Param::dispPaths], dispPaths);
 }
 
 QString Ex0days::setting(Ex0days::Param param) const
@@ -770,6 +789,7 @@ void Ex0days::_loadSettings()
         _7zCmd    = setting(Param::cmd7z);
         _unrarCmd = setting(Param::cmdRar);
         _unaceCmd = setting(Param::cmdAce);
+        _arjCmd   = setting(Param::cmdArj);
 
         if (_unrarCmd.toLower().endsWith("winrar.exe"))
             _useWinrar = true;
@@ -779,6 +799,7 @@ void Ex0days::_loadSettings()
         set7zCmd(_7zCmd);
         setUnrarCmd(_unrarCmd);
         setUnaceCmd(_unaceCmd);
+        setArjCmd(_arjCmd);
     }
 
     if (_hmi)
@@ -789,7 +810,10 @@ void Ex0days::_loadSettings()
     }
 }
 
-
+bool Ex0days::dispPaths() const
+{
+    return _settings->value(sParamValues[Param::dispPaths]).toBool();
+}
 
 const QString Ex0days::sASCII = "\
               _______       .___\n\

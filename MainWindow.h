@@ -73,7 +73,9 @@ public slots:
     void on7zipPath();
     void onUnrarPath();
     void onUnacePath();
+    void onArjPath();
     void onDstPath();
+    void onDispCompressionPaths(bool display);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *e) override;

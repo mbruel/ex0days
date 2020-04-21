@@ -55,11 +55,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->zipButton,  &QAbstractButton::clicked, this, &MainWindow::on7zipPath);
     connect(_ui->rarButton,  &QAbstractButton::clicked, this, &MainWindow::onUnrarPath);
     connect(_ui->aceButton,  &QAbstractButton::clicked, this, &MainWindow::onUnacePath);
+    connect(_ui->arjButton,  &QAbstractButton::clicked, this, &MainWindow::onArjPath);
     connect(_ui->dstButton,  &QAbstractButton::clicked, this, &MainWindow::onDstPath);
 
     connect(_ui->testOnlyCB, &QAbstractButton::toggled, this, &MainWindow::onTestOnly);
     connect(_ui->delSrcCB,   &QAbstractButton::toggled, this, &MainWindow::onDelSrc);
     connect(_ui->debugCB,    &QAbstractButton::toggled, this, &MainWindow::onDebugToggled);
+    connect(_ui->dispCompressionCB, &QAbstractButton::toggled, this, &MainWindow::onDispCompressionPaths);
 
     connect(_ui->clearSrcButton, &QAbstractButton::clicked, _ui->srcList,    &SignedListWidget::onDeleteSelectedItems);
     connect(_ui->addSrcButton,   &QAbstractButton::clicked, this,            &MainWindow::onAddSrc);
@@ -93,11 +95,15 @@ void MainWindow::init(Ex0days *app)
     _ui->zipLE->setText(_app->setting(Ex0days::Param::cmd7z));
     _ui->rarLE->setText(_app->setting(Ex0days::Param::cmdRar));
     _ui->aceLE->setText(_app->setting(Ex0days::Param::cmdAce));
+    _ui->arjLE->setText(_app->setting(Ex0days::Param::cmdArj));
     _ui->dstLE->setText(_app->setting(Ex0days::Param::dstDir));
 
     _ui->testOnlyCB->setChecked(_app->testOnly());
     _ui->delSrcCB->setChecked(_app->delSrc());
     _ui->debugCB->setChecked(_app->debug());
+    _ui->dispCompressionCB->setChecked(_app->dispPaths());
+    onDispCompressionPaths(_app->dispPaths());
+
 
 #ifdef __DEBUG__
 //    _ui->srcList->addPath("/tmp/ahbaz/1999.01.01", true);
@@ -143,11 +149,13 @@ void MainWindow::saveParams()
 {
     _app->set7zCmd(_ui->zipLE->text());
     _app->setUnaceCmd(_ui->aceLE->text());
+    _app->setArjCmd(_ui->arjLE->text());
     if (!_ui->rarLE->text().isEmpty())
         _app->setUnrarCmd(_ui->rarLE->text());
 
     _app->setDstFolder(_ui->dstLE->text());
-    _app->setOptions(_ui->testOnlyCB->isChecked(), _ui->delSrcCB->isChecked(), _ui->debugCB->isChecked());
+    _app->setOptions(_ui->testOnlyCB->isChecked(), _ui->delSrcCB->isChecked(),
+                     _ui->debugCB->isChecked(), _ui->dispCompressionCB->isChecked());
 }
 
 void MainWindow::onLaunch()
@@ -238,6 +246,21 @@ void MainWindow::onUnacePath()
         _ui->aceLE->setText(file);
 }
 
+void MainWindow::onArjPath()
+{
+    QString file = QFileDialog::getOpenFileName(
+                this,
+                tr("Select arj"),
+                _ui->arjLE->text()
+            #if defined(WIN32) || defined(__MINGW64__)
+                , "*.exe"
+            #endif
+                );
+
+    if (!file.isEmpty())
+        _ui->arjLE->setText(file);
+}
+
 void MainWindow::onDstPath()
 {
     QString folder = QFileDialog::getExistingDirectory(
@@ -248,6 +271,11 @@ void MainWindow::onDstPath()
 
     if (!folder.isEmpty())
         _ui->dstLE->setText(folder);
+}
+
+void MainWindow::onDispCompressionPaths(bool display)
+{
+    _ui->compressionBox->setVisible(display);
 }
 
 void MainWindow::onAddSrc()
@@ -316,6 +344,13 @@ bool MainWindow::_updateParams()
                              tr("Please set unace path to the right executable"));
         return false;
     }
+    if (!_app->setArjCmd(_ui->arjLE->text()))
+    {
+        QMessageBox::warning(nullptr,
+                             tr("arj path not valid..."),
+                             tr("Please set arj path to the right executable"));
+        return false;
+    }
 
     if (!_ui->rarLE->text().isEmpty() && !_app->setUnrarCmd(_ui->rarLE->text()))
     {
@@ -325,7 +360,8 @@ bool MainWindow::_updateParams()
         return false;
     }
 
-    _app->setOptions(_ui->testOnlyCB->isChecked(), _ui->delSrcCB->isChecked(), _ui->debugCB->isChecked());
+    _app->setOptions(_ui->testOnlyCB->isChecked(), _ui->delSrcCB->isChecked(),
+                     _ui->debugCB->isChecked(), _ui->dispCompressionCB->isChecked());
 
     return true;
 }

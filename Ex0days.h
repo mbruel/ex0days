@@ -35,7 +35,8 @@ class Ex0days : public QObject, public CmdOrGuiApp
 {
     Q_OBJECT
 public:
-    enum class Param {cmd7z, cmdRar, cmdAce, dstDir, testOnly, delSrc, debug};
+    enum class Param {cmd7z, cmdRar, cmdAce, cmdArj, dstDir,
+                      testOnly, delSrc, debug, dispPaths};
 
 private:
     enum class Opt {HELP = 0, VERSION, DEBUG,
@@ -52,6 +53,7 @@ private:
     QString             _7zCmd;
     QString             _unrarCmd;
     QString             _unaceCmd;
+    QString             _arjCmd;
 
     QDir               *_dstDir;
 
@@ -99,15 +101,17 @@ public:
     bool set7zCmd(const QString &path);
     bool setUnrarCmd(const QString &path);
     bool setUnaceCmd(const QString &path);
+    bool setArjCmd(const QString &path);
     bool setDstFolder(const QString &path);
 
-    void setOptions(bool testOnly, bool delSrc, bool debug);
+    void setOptions(bool testOnly, bool delSrc, bool debug, bool dispPaths);
 
     QString setting(Param param) const;
 
     inline bool testOnly() const;
     inline bool delSrc() const;
     inline bool debug() const;
+    bool dispPaths() const;
 
     inline void setDebug(bool enable);
 
@@ -155,7 +159,7 @@ private:
     // statics
 
     static constexpr const char *sAppName   = "ex0days";
-    static constexpr const char *sVersion   = "1.1";
+    static constexpr const char *sVersion   = "1.2";
     static constexpr const char *sDesc      = "extract double compressed archives";
 
     static constexpr const char *sLogFolder = "./logs";
@@ -207,7 +211,7 @@ const QString &Ex0days::_extractCMD() const
     case ARCHIVE_TYPE::RAR:
         return _unrarCmd.isEmpty() ? _7zCmd : _unrarCmd;
     case ARCHIVE_TYPE::ARJ:
-        return _useWinrar ? _unrarCmd : _7zCmd;
+        return _arjCmd;
     default:
         return _7zCmd;
     }
