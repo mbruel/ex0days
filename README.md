@@ -18,9 +18,6 @@ ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** f
 I've built only a Win64 release and create a package with all the required compression tools.<br/>
 You can either use <a href="https://github.com/mbruel/ex0days/releases/download/v1.2/ex0days_v1.2_x64_setup.exe">the installer</a> or <a href="https://github.com/mbruel/ex0days/releases/download/v1.2/ex0days_v1.2_win64.zip">the portable version</a><br/>
 <br />
-<b>Notes:</b> If you're <b>unpacking multi-volumes ARJ, it's advised to set WinRar.exe as Unrar method</b>.
-<br />
-It will then be used for both RAR and ARJ. Otherwise ex0days would use 7z which would only consider the first volume.<br/>
 
 ### How to build
 ex0days is developped in **C++11 / Qt5** <br/>
