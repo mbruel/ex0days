@@ -1,6 +1,6 @@
 <img align="left" width="80" height="80" src="https://raw.githubusercontent.com/mbruel/ex0days/master/icons/ex0days.png" alt="ex0days">
 
-# ex0days v1.1
+# ex0days v1.2
 
 **Command line / GUI tool to automate extraction \(or test\) of double compressed 0days**<br/>
 <br/>
@@ -15,7 +15,7 @@ ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** f
   - you can also **delete the source folders** automatically once extracted
   - **setting are saved** in a config file \(ini file on Windows, ~/.config/ex0days/1.0.conf on Linux\)
 <br />
-A win64 portable release containing all of the required compression tools is available: <a href="https://github.com/mbruel/ex0days/releases/download/v1.1/ex0days_v1.1_win64.zip">ex0days_v1.1_win64.zip</a><br/>
+A win64 portable release containing all of the required compression tools is available: <a href="https://github.com/mbruel/ex0days/releases/download/v1.2/ex0days_v1.2_win64.zip">ex0days_v1.2_win64.zip</a><br/>
 <br />
 <b>Notes:</b> If you're <b>unpacking multi-volumes ARJ, it's advised to set WinRar.exe as Unrar method</b>.
 <br />
