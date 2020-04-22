@@ -15,7 +15,7 @@ ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** f
   - you can also **delete the source folders** automatically once extracted
   - **setting are saved** in a config file \(ini file on Windows, ~/.config/ex0days/1.0.conf on Linux\)
 <br />
-I've built Windows 32bit and 64 bit versions. [You can download them here](https://github.com/mbruel/ex0days/releases/tag/v1.3)<br/>
+I've built Windows 32bit and 64 bit versions. <a href="https://github.com/mbruel/ex0days/releases/tag/v1.3">You can download them here</a><br/>
 The 32bit is compiled on XP with Qt v5.5.1, the 64bit on Windows7 with Qt v5.12.5<br/>
 <br />
 
