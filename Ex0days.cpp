@@ -728,7 +728,7 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
             QString newRar         = match.captured(1);
             QString number         = match.captured(2);
             QString oldStyleLetter = match.captured(3);
-            QString lastExtenstion = match.captured(5);
+            QString rarExtenstion  = match.captured(4);
 
             if (!newRar.isEmpty())
                 _archiveType = ARCHIVE_TYPE::RAR;
@@ -747,15 +747,20 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
 
             if (_archiveType == ARCHIVE_TYPE::RAR)
             {
-                if (sRegExpNumberOne.match(number).hasMatch())
+                if (!rarExtenstion.isEmpty() && newRar.isEmpty())
                     firstArchive = true;
                 else
-                    firstArchive = false;
-            }
+                {
+                    if (sRegExpNumberOne.match(number).hasMatch())
+                        firstArchive = true;
+                    else
+                        firstArchive = false;
+                }
+            }            
 
 //            qDebug() << file << " matches with newRar: " << newRar
 //                     << ", number: " << number << ", oldStyleLetter: " << oldStyleLetter
-//                     << ", lastExt: " << lastExtenstion;
+//                     << ", rarExtenstion: " << rarExtenstion;
         }
     }
 
