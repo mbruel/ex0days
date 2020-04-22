@@ -68,6 +68,7 @@ private:
     QFileInfo           _currentZip;
     QFileInfo           _fistArchive;
     ARCHIVE_TYPE        _archiveType;
+    QFileInfoList       _unzippedFiles;
 
     QElapsedTimer       _timeStart;
 
@@ -148,7 +149,7 @@ private:
 
     void _loadSettings();
 
-    void _goToNextFolder();
+    void _goToNextFolder(bool success);
 
     inline void _showVersionASCII();
     void _syntax(char *appName);
@@ -159,7 +160,7 @@ private:
     // statics
 
     static constexpr const char *sAppName   = "ex0days";
-    static constexpr const char *sVersion   = "1.2.1";
+    static constexpr const char *sVersion   = "1.3";
     static constexpr const char *sDesc      = "extract double compressed archives";
 
     static constexpr const char *sLogFolder = "./logs";

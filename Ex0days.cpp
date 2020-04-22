@@ -97,6 +97,7 @@ Ex0days::Ex0days(int &argc, char *argv[]):
     _zipFiles(), _currentZip(),
     _fistArchive(),
     _archiveType(ARCHIVE_TYPE::UNKNOWN),
+    _unzippedFiles(),
     _timeStart(),
     _settings(nullptr),
     _stopProcess(false),
@@ -377,6 +378,7 @@ void Ex0days::_clearDir()
     _zipFiles.clear();
     _currentPath.clear();
     _currentZip = QFileInfo();
+    _unzippedFiles.clear();
 }
 
 void Ex0days::_clearLogFile()
@@ -430,7 +432,7 @@ void Ex0days::onProcessNextFolder()
             if (zips.isEmpty())
             {
                 _failExtract(tr("no zip files"));
-                _goToNextFolder();
+                _goToNextFolder(false);
             }
             else
             {
@@ -502,7 +504,7 @@ void Ex0days::onProcFinished(int exitCode)
         if (exitCode != 0)
         {
             _failExtract(tr("error #%1 on zip file: %2").arg(exitCode).arg(_currentZip.fileName()));
-            _goToNextFolder();
+            _goToNextFolder(false);
         }
         else
         {
@@ -516,20 +518,19 @@ void Ex0days::onProcFinished(int exitCode)
     }
     else if (_state == STATE::FINAL)
     {
-        if (exitCode != 0)
-        {
-            _failExtract(tr("error #%1 extracting archive: %2").arg(exitCode).arg(_fistArchive.fileName()));
-        }
-        else
+        bool success = exitCode == 0;
+        if (success)
             _log(tr("%1 OK").arg(_srcDir->absolutePath()), true);
+        else
+            _failExtract(tr("error #%1 extracting archive: %2").arg(exitCode).arg(_fistArchive.fileName()));
 
-        _goToNextFolder();
+        _goToNextFolder(success);
     }
 }
 
-void Ex0days::_goToNextFolder()
+void Ex0days::_goToNextFolder(bool success)
 {
-    if (_testOnly)
+    if (_testOnly || !success)
     {
         QDir copyDir(QString("%1/%2").arg(_dstDir->absolutePath()).arg(_subPath()));
         if (!copyDir.removeRecursively())
@@ -537,7 +538,13 @@ void Ex0days::_goToNextFolder()
         else if (_debug)
             _log(tr("Copy directory deleted: %1").arg(copyDir.absolutePath()));
     }
-    else if (_delSrc)
+    else
+    {
+        for (const QFileInfo & fi : _unzippedFiles)
+            QFile::remove(fi.absoluteFilePath());
+    }
+
+    if (_delSrc)
     {
         if (!_srcDir->removeRecursively())
             _error(tr("Error deleting source directory: %1").arg(_srcDir->absolutePath()));
@@ -569,9 +576,9 @@ void Ex0days::_doSecondExtract()
     qDebug() << tr("Ready for Second Extract!");
 
     QDir copyDir(QString("%1/%2").arg(_dstDir->absolutePath()).arg(_subPath()));
-    QFileInfoList unzippedFiles = copyDir.entryInfoList(QDir::Files|QDir::Hidden|QDir::Readable|QDir::NoSymLinks, QDir::Name);
+    _unzippedFiles = copyDir.entryInfoList(QDir::Files|QDir::Hidden|QDir::Readable|QDir::NoSymLinks, QDir::Name);
     bool isFirstArchive = false;
-    for (const QFileInfo &file : unzippedFiles)
+    for (const QFileInfo &file : _unzippedFiles)
     {
         _findArchiveType(file, isFirstArchive);
         if (isFirstArchive)
@@ -600,7 +607,7 @@ void Ex0days::_doSecondExtract()
     else
     {
         _failExtract(tr("first archive is missing"));
-        _goToNextFolder();
+        _goToNextFolder(false);
     }
 }
 

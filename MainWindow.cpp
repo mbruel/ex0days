@@ -313,10 +313,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (_state == STATE::RUNNING)
     {
-        _app->stopProcessing();
-        qApp->processEvents();
+        int res = QMessageBox::question(this,
+                                        tr("Close while still unpacking?"),
+                                        tr("%1 is currently unpacking.\nAre you sure you want to quit?").arg(_app->appName()),
+                                        QMessageBox::Yes,
+                                        QMessageBox::No);
+        if (res == QMessageBox::Yes)
+        {
+            _app->stopProcessing();
+            qApp->processEvents();
+            event->accept();
+        }
+        else
+            event->ignore();
     }
-    event->accept();
+    else
+        event->accept();
 }
 
 
