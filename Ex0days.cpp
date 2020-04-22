@@ -106,7 +106,7 @@ Ex0days::Ex0days(int &argc, char *argv[]):
     _logFile(nullptr), _logStream(),
     _useWinrar(false)
 {
-#if defined(WIN32) || defined(__MINGW64__)
+#if defined(WIN32) || defined(__MINGW64__) || defined(__MINGW32__)
     _settings = new QSettings(QString("%1.ini").arg(appName()), QSettings::Format::IniFormat);
 #else
     _settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope, sAppName, sVersion);
