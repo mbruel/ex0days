@@ -76,8 +76,8 @@ const QMap<Ex0days::Param, QString> Ex0days::sParamValues = {
 
 const QStringList Ex0days::s7zArgs = {"x", "-y"};
 
-const QRegularExpression Ex0days::sRegExpArchiveExtensions = QRegularExpression("^.*\\.(rar|ace|arj)$");
-const QRegularExpression Ex0days::sRegExpArchiveFiles      = QRegularExpression("^.*\\.(part)?(([rac])?\\d+)(\\.rar)?$");
+const QRegularExpression Ex0days::sRegExpArchiveExtensions = QRegularExpression("^.*\\.(rar|ace|arj|7z)$");
+const QRegularExpression Ex0days::sRegExpArchiveFiles      = QRegularExpression("^(.*)\\.(part)?(([rac])?\\d+)(\\.rar)?$");
 const QRegularExpression Ex0days::sRegExpNumberOne         = QRegularExpression("^0*1$");
 
 
@@ -731,6 +731,8 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
             _archiveType = ARCHIVE_TYPE::RAR;
         else if (ext == "ace")
             _archiveType = ARCHIVE_TYPE::ACE;
+        else if (ext == "7z")
+            _archiveType = ARCHIVE_TYPE::Z7;
         else
             _archiveType = ARCHIVE_TYPE::ARJ;
     }
@@ -740,13 +742,16 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
         match = sRegExpArchiveFiles.match(fileNameLowerCase);
         if (match.hasMatch())
         {
-            QString newRar         = match.captured(1);
-            QString number         = match.captured(2);
-            QString oldStyleLetter = match.captured(3);
-            QString rarExtenstion  = match.captured(4);
+            QString baseName       = match.captured(1);
+            QString newRar         = match.captured(2);
+            QString number         = match.captured(3);
+            QString oldStyleLetter = match.captured(4);
+            QString rarExtenstion  = match.captured(5);
 
             if (!newRar.isEmpty())
                 _archiveType = ARCHIVE_TYPE::RAR;
+            else if (baseName.endsWith(".7z"))
+                _archiveType = ARCHIVE_TYPE::Z7;
             else if (!oldStyleLetter.isEmpty())
             {
                 const QChar &letter = oldStyleLetter.at(0);
@@ -760,7 +765,7 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
             else if (!number.isEmpty())
                 _archiveType = ARCHIVE_TYPE::RAR;
 
-            if (_archiveType == ARCHIVE_TYPE::RAR)
+            if (_archiveType == ARCHIVE_TYPE::RAR || _archiveType == ARCHIVE_TYPE::Z7)
             {
                 if (!rarExtenstion.isEmpty() && newRar.isEmpty())
                     firstArchive = true;
@@ -790,6 +795,9 @@ void Ex0days::_findArchiveType(const QFileInfo &file, bool &firstArchive)
         break;
     case ARCHIVE_TYPE::ARJ:
         archiveType = "ARJ";
+        break;
+    case ARCHIVE_TYPE::Z7:
+        archiveType = "7Z";
         break;
     default:
         archiveType = "UNKNOWN";

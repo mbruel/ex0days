@@ -45,7 +45,7 @@ private:
                    };
     enum class STATE : char {IDLE = 0, UNZIP, FINAL};
 
-    enum class ARCHIVE_TYPE {UNKNOWN = 0, RAR, ACE, ARJ};
+    enum class ARCHIVE_TYPE {UNKNOWN = 0, RAR, ACE, ARJ, Z7};
 
 
     STATE               _state;
