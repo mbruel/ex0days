@@ -4,7 +4,7 @@
 //
 // This file is a part of ex0days : https://github.com/mbruel/ex0days
 //
-// ngPost is free software; you can redistribute it and/or modify
+// ex0days is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 3.0 of the License.
 //
@@ -149,7 +149,7 @@ private:
 
     void _loadSettings();
 
-    void _goToNextFolder(bool success);
+    void _goToNextFolder(bool success, bool delUnzippedFiles = true);
 
     inline void _showVersionASCII();
     void _syntax(char *appName);

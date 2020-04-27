@@ -4,7 +4,7 @@
 //
 // This file is a part of ex0days : https://github.com/mbruel/ex0days
 //
-// ngPost is free software; you can redistribute it and/or modify
+// ex0days is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 3.0 of the License.
 //
@@ -528,7 +528,7 @@ void Ex0days::onProcFinished(int exitCode)
     }
 }
 
-void Ex0days::_goToNextFolder(bool success)
+void Ex0days::_goToNextFolder(bool success, bool delUnzippedFiles)
 {
     if (_testOnly || !success)
     {
@@ -538,7 +538,7 @@ void Ex0days::_goToNextFolder(bool success)
         else if (_debug)
             _log(tr("Copy directory deleted: %1").arg(copyDir.absolutePath()));
     }
-    else
+    else if (delUnzippedFiles)
     {
         for (const QFileInfo & fi : _unzippedFiles)
             QFile::remove(fi.absoluteFilePath());
@@ -577,10 +577,13 @@ void Ex0days::_doSecondExtract()
 
     QDir copyDir(QString("%1/%2").arg(_dstDir->absolutePath()).arg(_subPath()));
     _unzippedFiles = copyDir.entryInfoList(QDir::Files|QDir::Hidden|QDir::Readable|QDir::NoSymLinks, QDir::Name);
-    bool isFirstArchive = false;
+    bool isFirstArchive = false, allUnknowArchives = true;
     for (const QFileInfo &file : _unzippedFiles)
     {
         _findArchiveType(file, isFirstArchive);
+        if (_archiveType != ARCHIVE_TYPE::UNKNOWN)
+            allUnknowArchives = false;
+
         if (isFirstArchive)
         {
             _fistArchive = file;
@@ -603,6 +606,11 @@ void Ex0days::_doSecondExtract()
 
         qDebug() << cmd << " "  << args.join(" ");
         _extProc.start(cmd, args);
+    }
+    else if (allUnknowArchives)
+    {
+        _error(tr("%1 ?? (no second archives found)").arg(_srcDir->absolutePath()));
+        _goToNextFolder(true, false);
     }
     else
     {
