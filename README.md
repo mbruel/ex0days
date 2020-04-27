@@ -1,6 +1,6 @@
 <img align="left" width="80" height="80" src="https://raw.githubusercontent.com/mbruel/ex0days/master/icons/ex0days.png" alt="ex0days">
 
-# ex0days v1.2
+# ex0days v1.3
 
 **Command line / GUI tool to automate extraction \(or test\) of double compressed 0days**<br/>
 <br/>
@@ -15,8 +15,8 @@ ex0days relies on external programs to unpack: **unrar**, **unace** and **7z** f
   - you can also **delete the source folders** automatically once extracted
   - **setting are saved** in a config file \(ini file on Windows, ~/.config/ex0days/1.0.conf on Linux\)
 <br />
-I've built only a Win64 release and create a package with all the required compression tools.<br/>
-You can either use <a href="https://github.com/mbruel/ex0days/releases/download/v1.2/ex0days_v1.2_x64_setup.exe">the installer</a> or <a href="https://github.com/mbruel/ex0days/releases/download/v1.2/ex0days_v1.2_win64.zip">the portable version</a><br/>
+I've built Windows 32bit and 64 bit versions. <a href="https://github.com/mbruel/ex0days/releases/tag/v1.3">You can download them here</a><br/>
+The 32bit is compiled on XP with Qt v5.5.1, the 64bit on Windows7 with Qt v5.12.5<br/>
 <br />
 
 ### How to build
