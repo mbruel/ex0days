@@ -160,7 +160,7 @@ private:
     // statics
 
     static constexpr const char *sAppName   = "ex0days";
-    static constexpr const char *sVersion   = "1.3";
+    static constexpr const char *sVersion   = "1.4";
     static constexpr const char *sDesc      = "extract double compressed archives";
 
     static constexpr const char *sLogFolder = "./logs";
