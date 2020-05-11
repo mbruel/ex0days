@@ -104,7 +104,7 @@ Ex0days::Ex0days(int &argc, char *argv[]):
     _testOnly(false), _delSrc(false),
     _debug(false),
     _logFile(nullptr), _logStream(),
-    _useWinrar(false)
+    _useWinrar(false), _nbFailed(0)
 {
 #if defined(WIN32) || defined(__MINGW64__) || defined(__MINGW32__)
     _settings = new QSettings(QString("%1.ini").arg(appName()), QSettings::Format::IniFormat);
@@ -273,6 +273,7 @@ int Ex0days::startHMI()
 
 void Ex0days::processFolders(const QStringList &srcFolders)
 {
+    _nbFailed    = 0;
     _stopProcess = false;
     _logFile = new QFile(QString("./%1/%2_%3.csv").arg(
                              sLogFolder).arg(
@@ -363,6 +364,7 @@ void Ex0days::_error(const QString &msg)
 
 void Ex0days::_failExtract(const QString &reason)
 {
+    ++_nbFailed;
     _logStream << _srcDir->absolutePath() << ", " << reason << "\n" << flush;
     _error(tr("%1 KO (%2)").arg(_srcDir->absolutePath()).arg(reason));
 }
@@ -387,6 +389,8 @@ void Ex0days::_clearLogFile()
     {
         _logStream.setDevice(nullptr);
         _logFile->close();
+        if (_nbFailed == 0)
+            _logFile->remove();
         delete _logFile;
         _logFile = nullptr;
     }
@@ -418,6 +422,7 @@ void Ex0days::onProcessNextFolder()
         if (files.isEmpty())
         {
             _failExtract(tr("empty folder"));
+            _goToNextFolder(false);
         }
         else
         {
